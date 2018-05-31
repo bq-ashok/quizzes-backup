@@ -1,0 +1,117 @@
+<div class="nav-player-container">
+  {{#if showPrevious}}
+    <div class="prev" {{action 'previousResource'}}>
+      {{gru-icon name="ic_skip_previous"}}
+      <span>{{t "qz-question-viewer.previous"}}</span>
+    </div>
+  {{else}}
+    <div class="prev disabled">
+      {{gru-icon name="ic_skip_previous"}}
+      <span>{{t "qz-question-viewer.previous"}}</span>
+    </div>
+  {{/if}}
+
+  <div class="player-container">
+    <div class="player-info">
+    {{#if isNavigatorOpen}}
+      <div class="list-resource-nav pull-left" {{action 'onCloseNavigator'}}>
+        {{gru-icon name="ic_keyboard_arrow_down"}}
+      </div>
+    {{else}}
+      <div class="list-resource-nav pull-left" {{action 'onOpenNavigator'}}>
+        {{gru-icon name="ic_keyboard_arrow_up"}}
+      </div>
+    {{/if}}
+      <div class="current-resource-info">
+        <div class="resource-sequence pull-left">
+          <span>{{resource.sequence}}</span>
+        </div>
+        <div class="pull-left">
+          <i class="{{resource.format}} resource-icon"></i>
+        </div>
+        <div class="pull-left resource-title">
+          <span>{{no-tags text=resource.title}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="reaction-bar pull-right">
+      {{qz-emotion-picker startEmotion=ratingScore onChangeEmotion="changeEmotion" readOnly=submitted}}
+    </div>
+    <div class="list-resources">
+      <div class="breadcrumb-title">
+        {{#if unitTitle}}
+          <div class="title-item"><span>{{unitTitle.shortname}}:</span><span class="title-fullname ellipsis">{{unitTitle.fullname}}</span> <span>{{gru-icon name="keyboard_arrow_right"}} </span></div>
+        {{/if}}
+        {{#if lessonTitle}}
+          <div class="title-item"><span>{{lessonTitle.shortname}}:</span><span class="title-fullname ellipsis">{{lessonTitle.fullname}}</span> <span>{{gru-icon name="keyboard_arrow_right"}} </span></div>
+        {{/if}}
+        {{#if collectionTitle}}
+          <div class="title-item"><span>{{collectionTitle.shortname}}:</span><span class="title-fullname ellipsis">{{collectionTitle.fullname}}</span></div>
+        {{/if}}
+      </div>
+      <ul class="list-group resources {{if isNavigationDisabled 'disabled' }}">
+          {{#each resourceItems as |item index|}}
+            <li class="list-group-item {{if item.started 'started'}} {{if item.selected 'selected'}}"
+                {{action 'selectItem' item}}>
+              <div class="resources-info">
+                <span class="resource-index pull-left">{{plus-one index}}</span>
+                <i class="resource-icon {{item.resource.format}} pull-left"></i>
+                <span class="title pull-left">
+                  {{no-tags text=item.resource.title}}
+                </span>
+                <span class="selected-reaction pull-left" id="resource-{{item.resource.id}}">
+                    <svg>
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/assets/quizzes-addon/emoji-one/emoji.svg#{{item.unicode}}"></use>
+                    </svg>
+                </span>
+
+                {{#if (and showFeedback (not item.resource.isOpenEnded))}}
+                  {{#if item.started}}
+                    {{#if item.isCorrect}}
+                      <span class="score correct pull-left">
+                        {{gru-icon name='ic_done_all'}}
+                      </span>
+                    {{else}}
+                      <span class="score pull-left incorrect">
+                        {{gru-icon name='ic_close'}}
+                      </span>
+                    {{/if}}
+                  {{/if}}
+                {{/if}}
+              </div>
+            </li>
+          {{/each}}
+      </ul>
+      {{#if collection.isCollection}}
+        {{#unless (or showFinishConfirmation submitted)}}
+          <div class="usage-report" {{action 'seeUsageReport'}}>
+            <span><span>{{gru-icon name="subject"}}</span>{{t 'qz-player-footer.usage-report'}}</span>
+          </div>
+        {{/unless}}
+      {{else}}
+        <div class="submit-all" {{action "finishCollection"}}>
+          {{t 'common.submitAll'}}
+        </div>
+      {{/if}}
+    </div>
+  </div>
+  <div class="next-action">
+    {{#if showNext}}
+      <div class="next {{unless isNextEnabled 'disabled'}}" data-toggle="tooltip" title="{{t 'common.save-next'}}" {{action 'nextResource'}}>
+        <span>{{t 'common.next'}}</span> {{gru-icon name="ic_skip_next"}}
+      </div>
+    {{else}}
+      {{#if collection.isCollection}}
+        {{#unless (or showFinishConfirmation submitted)}}
+          <div class="usage-report {{unless isNextEnabled 'disabled'}}" {{action 'seeUsageReport'}}>
+            <span>{{t 'qz-player-footer.usage-report'}}</span>
+          </div>
+        {{/unless}}
+      {{else}}
+        <div class="submit-all {{unless isNextEnabled 'disabled'}}" data-toggle="tooltip" title="{{t 'common.save-submit'}}" {{action "finishCollection"}}>
+          <span>{{t 'common.submitAll'}}</span>
+        </div>
+      {{/if}}
+    {{/if}}
+  </div>
+</div>
